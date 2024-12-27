@@ -1,39 +1,40 @@
-
 <!DOCTYPE html>
-<html lang="en" class="font-Roboto">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <link rel="stylesheet" href="css/5a90c3ba14f91210.css">
-    <title>AI Video Labs | Customized UI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Center Text Example</title>
     <style>
-        /* Stijl voor de gridachtergrond */
-        .bg-grid-slate {
+        /* Algemene instellingen voor de achtergrond */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif; /* Vervang dit met je gewenste lettertype */
+            background: linear-gradient(135deg, #001f3f, #005f73);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Grid-effect op de achtergrond */
+        body::before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent  1px),
-                              linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 120px 120px;
-            z-index: -1; /* Zorg dat het achter de content staat */
+            background: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 100px 100px;
+            z-index: 0;
         }
 
-        /* Algemene achtergrond met gradient */
-        body {
-            background: linear-gradient(to right, #1e293b, #334155, #0f172a);
-            overflow: hidden;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
-</head>
-<body>
-    <!-- Gridachtergrond -->
-    <div class="bg-grid-slate"></div>
-    
-*/
+        /* Centraal uitgelijnde tekst */
         .content {
             text-align: center;
             z-index: 1; /* Zorg dat de content boven de achtergrond staat */
