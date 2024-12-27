@@ -57,22 +57,26 @@
             margin: 0 auto;
         }
 
-        /* Stijl voor een knop */
-        .content a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 1rem;
-            color: white;
-            background-color: #6c63ff;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
+/* Stijl voor een knop */
+.content a {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: white;
+    background-color: #7a5cff; /* Paars tint */
+    text-decoration: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4); /* Witte gloed */
+    transition: all 0.3s ease-in-out;
+}
 
-        .content a:hover {
-            background-color: #4834d4;
-        }
+/* Hover-effect voor de knop */
+.content a:hover {
+    background-color: #5a3cff; /* Donkerdere paars tint */
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.6); /* Intensere witte gloed */
+    transform: scale(1.05); /* Klein inzoom-effect */
+}
     </style>
 </head>
 <body>
