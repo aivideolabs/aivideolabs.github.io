@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Center Text Example</title>
+    <title>Choose Video Style</title>
     <style>
         /* Algemene instellingen voor de achtergrond */
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif; /* Vervang dit met je gewenste lettertype */
+            font-family: 'Arial', sans-serif;
             background: linear-gradient(135deg, #001f3f, #005f73);
             color: white;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             overflow: hidden;
         }
 
@@ -34,58 +34,111 @@
             z-index: 0;
         }
 
-        /* Centraal uitgelijnde tekst */
-        .content {
-            text-align: center;
-            z-index: 1; /* Zorg dat de content boven de achtergrond staat */
+        /* Algemene knoppenstijl */
+        .btn {
+            display: inline-block;
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: white;
+            background-color: #7a5cff;
+            text-decoration: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            z-index: 1;
         }
 
-        /* Stijl van de titel */
-        .content h1 {
-            font-size: 3rem;
-            font-weight: bold;
-            margin: 0 0 20px;
-            background: linear-gradient(to right, #00d4ff, #a7f3d0);
-            -webkit-background-clip: text;
-            color: transparent;
+        .btn:hover {
+            background-color: #5a3cff;
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.6);
+            transform: scale(1.05);
         }
 
-        /* Stijl van de beschrijving */
-        .content p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto;
+        /* Container voor de afbeeldingen */
+        .images-container {
+            display: none; /* Verberg de afbeeldingen standaard */
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            z-index: 1;
         }
 
-/* Stijl voor een knop */
-.content a {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    color: white;
-    background-color: #7a5cff; /* Paars tint */
-    text-decoration: none;
-    border-radius: 5px;
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4); /* Witte gloed */
-    transition: all 0.3s ease-in-out;
-}
+        /* Stijl voor afbeeldingen */
+        .images-container img {
+            width: 300px;
+            border-radius: 10px;
+            transition: transform 0.3s ease, border 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
 
-/* Hover-effect voor de knop */
-.content a:hover {
-    background-color: #5a3cff; /* Donkerdere paars tint */
-    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.6); /* Intensere witte gloed */
-    transform: scale(1.05); /* Klein inzoom-effect */
-}
+        /* Geselecteerde afbeelding met paarse rand */
+        .images-container img.selected {
+            border: 5px solid #7a5cff;
+            transform: scale(1.1);
+        }
+
+        .images-container img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Terug-knop */
+        .back-btn {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
+    <!-- Terug-knop -->
+    <button class="btn back-btn" onclick="goBack()" style="display: none;">Go Back</button>
+
+    <!-- Hoofdtekst en knop -->
     <div class="content">
         <h1>Turn scripts into Videos</h1>
         <p>
             Easily create captivating videos by combining background footage with customizable scripts, voiceovers and subtitles.
         </p>
-        <a href="#">Create Your Video Now</a>
+        <button class="btn" onclick="showImages()">Choose Your Style</button>
     </div>
+
+    <!-- Afbeeldingen -->
+    <div class="images-container">
+        <img src="your-image-1.png" alt="Option 1" onclick="selectImage(this)">
+        <img src="your-image-2.png" alt="Option 2" onclick="selectImage(this)">
+        <img src="your-image-3.png" alt="Option 3" onclick="selectImage(this)">
+    </div>
+
+    <script>
+        // Toon de afbeeldingen en verberg de hoofdcontent
+        function showImages() {
+            document.querySelector('.content').style.display = 'none';
+            document.querySelector('.images-container').style.display = 'flex';
+            document.querySelector('.back-btn').style.display = 'block';
+        }
+
+        // Verberg de afbeeldingen en keer terug naar de hoofdcontent
+        function goBack() {
+            document.querySelector('.content').style.display = 'block';
+            document.querySelector('.images-container').style.display = 'none';
+            document.querySelector('.back-btn').style.display = 'none';
+        }
+
+        // Selecteer een afbeelding en geef een paarse rand
+        function selectImage(img) {
+            // Verwijder selectie van andere afbeeldingen
+            const images = document.querySelectorAll('.images-container img');
+            images.forEach(image => image.classList.remove('selected'));
+
+            // Voeg selectie toe aan de aangeklikte afbeelding
+            img.classList.add('selected');
+        }
+    </script>
 </body>
 </html>
