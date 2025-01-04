@@ -3,89 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Center Text Example</title>
+    <title>ChiefXD Video Date Guessing Game</title>
     <style>
-        /* Algemene instellingen voor de achtergrond */
         body {
+            background: linear-gradient(to right, #1e293b, #334155, #0f172a);
+            font-family: Roboto, sans-serif;
+            color: #ffffff;
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif; /* Vervang dit met je gewenste lettertype */
-            background: linear-gradient(135deg, #001f3f, #005f73);
-            color: white;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
         }
 
-        /* Grid-effect op de achtergrond */
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 100px 100px;
-            z-index: 0;
+        h1 {
+            margin-top: 2rem;
+            color: #cbd5e1;
         }
 
-        /* Centraal uitgelijnde tekst */
-        .content {
+        .video-container {
+            margin-top: 2rem;
             text-align: center;
-            z-index: 1; /* Zorg dat de content boven de achtergrond staat */
         }
 
-        /* Stijl van de titel */
-        .content h1 {
-            font-size: 3rem;
-            font-weight: bold;
-            margin: 0 0 20px;
-            background: linear-gradient(to right, #00d4ff, #a7f3d0);
-            -webkit-background-clip: text;
-            color: transparent;
+        iframe {
+            width: 80%;
+            height: 450px;
+            border: none;
+            border-radius: 10px;
+            margin-bottom: 1rem;
         }
 
-        /* Stijl van de beschrijving */
-        .content p {
+        .slider-container {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        input[type="range"] {
+            width: 80%;
+        }
+
+        .slider-label {
+            margin-top: 1rem;
             font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto;
+            color: #cbd5e1;
         }
 
-/* Stijl voor een knop */
-.content a {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    color: white;
-    background-color: #7a5cff; /* Paars tint */
-    text-decoration: none;
-    border-radius: 5px;
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4); /* Witte gloed */
-    transition: all 0.3s ease-in-out;
-}
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: #3b82f6;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
 
-/* Hover-effect voor de knop */
-.content a:hover {
-    background-color: #5a3cff; /* Donkerdere paars tint */
-    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.6); /* Intensere witte gloed */
-    transform: scale(1.05); /* Klein inzoom-effect */
-}
+        button:hover {
+            background-color: #2563eb;
+        }
+
+        .result {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: #f87171;
+        }
     </style>
 </head>
 <body>
-    <div class="content">
-        <h1>Turn scripts into Videos</h1>
-        <p>
-            Easily create captivating videos by combining background footage with customizable scripts, voiceovers and subtitles.
-        </p>
-        <a href="#">Create Your Video Now</a>
+    <h1>ChiefXD Video Date Guessing Game</h1>
+    <div class="video-container">
+        <iframe id="videoPlayer" src="" allowfullscreen></iframe>
+        <h2 id="videoTitle">Loading random video...</h2>
     </div>
+    <div class="slider-container">
+        <p class="slider-label">Guess the date: <span id="sliderMonth">January</span> <span id="sliderYear">2023</span></p>
+        <input type="range" id="dateSlider" min="0" max="24" value="0" />
+        <button id="confirmButton">Confirm</button>
+        <p class="result" id="resultMessage"></p>
+    </div>
+
+    <script>
+        const apiKey = 'AIzaSyDr8m5EpPgSdS-MF-rk00HV8rk1jJFQh9E';
+        const channelId = 'UCZ7jSWwFSdFw8hDbihBXZeQ'; // ChiefXD's Channel ID
+        const videoPlayer = document.getElementById('videoPlayer');
+        const videoTitle = document.getElementById('videoTitle');
+        const slider = document.getElementById('dateSlider');
+        const sliderMonthLabel = document.getElementById('sliderMonth');
+        const sliderYearLabel = document.getElementById('sliderYear');
+        const confirmButton = document.getElementById('confirmButton');
+        const resultMessage = document.getElementById('resultMessage');
+
+        let videos = [];
+        let randomVideo = null;
+        let firstVideoDate = null;
+        let currentYear = new Date().getFullYear();
+
+        // Fetch videos from ChiefXD's channel
+        async function fetchVideos() {
+            try {
+                const videoResponse = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet&maxResults=50`);
+                const videoData = await videoResponse.json();
+                videos = videoData.items.filter(video => video.id.videoId);
+                randomVideo = videos[Math.floor(Math.random() * videos.length)];
+                const publishedDate = new Date(randomVideo.snippet.publishedAt);
+                firstVideoDate = new Date(Math.min(...videos.map(v => new Date(v.snippet.publishedAt))));
+
+                loadRandomVideo(randomVideo);
+                setupSlider(firstVideoDate, new Date());
+            } catch (error) {
+                console.error('Error fetching videos:', error);
+            }
+        }
+
+        // Load a random video
+        function loadRandomVideo(video) {
+            videoPlayer.src = `https://www.youtube.com/embed/${video.id.videoId}`;
+            videoTitle.textContent = video.snippet.title;
+        }
+
+        // Set up the slider
+        function setupSlider(startDate, endDate) {
+            const startYear = startDate.getFullYear();
+            const startMonth = startDate.getMonth();
+            const totalMonths = (endDate.getFullYear() - startYear) * 12 + endDate.getMonth() - startMonth;
+
+            slider.max = totalMonths;
+            slider.value = 0;
+
+            updateSliderLabels(startYear, startMonth, slider.value);
+            slider.addEventListener('input', () => updateSliderLabels(startYear, startMonth, slider.value));
+        }
+
+        // Update slider labels
+        function updateSliderLabels(startYear, startMonth, value) {
+            const selectedDate = new Date(startYear, startMonth + parseInt(value));
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+            sliderMonthLabel.textContent = monthNames[selectedDate.getMonth()];
+            sliderYearLabel.textContent = selectedDate.getFullYear();
+        }
+
+        // Confirm the guess
+        confirmButton.addEventListener('click', () => {
+            const selectedDate = new Date(firstVideoDate.getFullYear(), firstVideoDate.getMonth() + parseInt(slider.value));
+            const actualDate = new Date(randomVideo.snippet.publishedAt);
+            const differenceInMonths = Math.round((actualDate - selectedDate) / (1000 * 60 * 60 * 24 * 30.44));
+
+            if (differenceInMonths === 0) {
+                resultMessage.textContent = "Correct! You guessed the exact date!";
+                resultMessage.style.color = "#4ade80";
+            } else {
+                resultMessage.textContent = `You were ${Math.abs(differenceInMonths)} month(s) ${differenceInMonths > 0 ? "early" : "late"}.`;
+                resultMessage.style.color = "#f87171";
+            }
+        });
+
+        // Start the game
+        fetchVideos();
+    </script>
 </body>
 </html>
