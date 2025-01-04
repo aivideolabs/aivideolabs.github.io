@@ -159,6 +159,8 @@
             slider.value = 0;
 
             updateSliderLabels(startYear, startMonth, slider.value);
+
+            // Live update van labels terwijl de slider beweegt
             slider.addEventListener('input', () => updateSliderLabels(startYear, startMonth, slider.value));
         }
 
