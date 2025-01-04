@@ -3,50 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChiefXD Video Date Guessing Game</title>
+    <title>ChiefXD Video Guessing Game</title>
     <style>
+        /* Algemene stijl */
         body {
             background: linear-gradient(to right, #1e293b, #334155, #0f172a);
             font-family: Roboto, sans-serif;
-            color: #ffffff;
+            color: white;
             margin: 0;
-            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
         }
 
         h1 {
-            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            text-align: center;
             color: #cbd5e1;
         }
 
-        .video-container {
-            margin-top: 2rem;
-            text-align: center;
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 1200px;
+            height: 80%;
         }
 
-        iframe {
+        .video-section, .slider-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-section iframe {
             width: 80%;
-            height: 450px;
-            border: none;
+            max-width: 600px;
+            height: 315px;
             border-radius: 10px;
-            margin-bottom: 1rem;
+            border: none;
         }
 
-        .slider-container {
-            margin-top: 2rem;
+        .slider-section {
+            margin-top: 1rem;
             text-align: center;
         }
 
-        input[type="range"] {
+        .slider-section input[type="range"] {
             width: 80%;
         }
 
         .slider-label {
-            margin-top: 1rem;
+            margin: 1rem 0;
             font-size: 1.2rem;
             color: #cbd5e1;
+        }
+
+        .result {
+            margin-top: 1rem;
+            font-size: 1.2rem;
         }
 
         button {
@@ -63,25 +85,24 @@
         button:hover {
             background-color: #2563eb;
         }
-
-        .result {
-            margin-top: 1rem;
-            font-size: 1.2rem;
-            color: #f87171;
-        }
     </style>
 </head>
 <body>
-    <h1>ChiefXD Video Date Guessing Game</h1>
-    <div class="video-container">
-        <iframe id="videoPlayer" src="" allowfullscreen></iframe>
-        <h2 id="videoTitle">Loading random video...</h2>
-    </div>
-    <div class="slider-container">
-        <p class="slider-label">Guess the date: <span id="sliderMonth">January</span> <span id="sliderYear">2023</span></p>
-        <input type="range" id="dateSlider" min="0" max="24" value="0" />
-        <button id="confirmButton">Confirm</button>
-        <p class="result" id="resultMessage"></p>
+    <h1>ChiefXD Video Guessing Game</h1>
+    <div class="container">
+        <!-- Video Sectie -->
+        <div class="video-section">
+            <iframe id="videoPlayer" src="" allowfullscreen></iframe>
+            <h2 id="videoTitle">Loading a random video...</h2>
+        </div>
+
+        <!-- Slider Sectie -->
+        <div class="slider-section">
+            <p class="slider-label">Guess the date: <span id="sliderMonth">January</span> <span id="sliderYear">2023</span></p>
+            <input type="range" id="dateSlider" min="0" max="24" value="0" />
+            <button id="confirmButton">Confirm</button>
+            <p class="result" id="resultMessage"></p>
+        </div>
     </div>
 
     <script>
@@ -98,32 +119,37 @@
         let videos = [];
         let randomVideo = null;
         let firstVideoDate = null;
-        let currentYear = new Date().getFullYear();
 
-        // Fetch videos from ChiefXD's channel
+        // Maanden voor weergave
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        // Video's ophalen
         async function fetchVideos() {
             try {
-                const videoResponse = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet&maxResults=50`);
+                const videoResponse = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet&order=date&maxResults=50`);
                 const videoData = await videoResponse.json();
                 videos = videoData.items.filter(video => video.id.videoId);
                 randomVideo = videos[Math.floor(Math.random() * videos.length)];
-                const publishedDate = new Date(randomVideo.snippet.publishedAt);
-                firstVideoDate = new Date(Math.min(...videos.map(v => new Date(v.snippet.publishedAt))));
+                firstVideoDate = new Date(videos[videos.length - 1].snippet.publishedAt);
 
                 loadRandomVideo(randomVideo);
                 setupSlider(firstVideoDate, new Date());
             } catch (error) {
                 console.error('Error fetching videos:', error);
+                videoTitle.textContent = "Failed to load videos.";
             }
         }
 
-        // Load a random video
+        // Random video laden
         function loadRandomVideo(video) {
             videoPlayer.src = `https://www.youtube.com/embed/${video.id.videoId}`;
             videoTitle.textContent = video.snippet.title;
         }
 
-        // Set up the slider
+        // Slider instellen
         function setupSlider(startDate, endDate) {
             const startYear = startDate.getFullYear();
             const startMonth = startDate.getMonth();
@@ -136,16 +162,14 @@
             slider.addEventListener('input', () => updateSliderLabels(startYear, startMonth, slider.value));
         }
 
-        // Update slider labels
+        // Labels updaten
         function updateSliderLabels(startYear, startMonth, value) {
             const selectedDate = new Date(startYear, startMonth + parseInt(value));
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
             sliderMonthLabel.textContent = monthNames[selectedDate.getMonth()];
             sliderYearLabel.textContent = selectedDate.getFullYear();
         }
 
-        // Confirm the guess
+        // Bevestig de gok
         confirmButton.addEventListener('click', () => {
             const selectedDate = new Date(firstVideoDate.getFullYear(), firstVideoDate.getMonth() + parseInt(slider.value));
             const actualDate = new Date(randomVideo.snippet.publishedAt);
@@ -160,7 +184,7 @@
             }
         });
 
-        // Start the game
+        // Start
         fetchVideos();
     </script>
 </body>
