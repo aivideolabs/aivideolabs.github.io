@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <title>Guess the Video Date | ChiefXD</title>
     <style>
-        /* Algemene achtergrond met gradient */
         body {
             background: linear-gradient(to right, #1e293b, #334155, #0f172a);
             overflow: hidden;
@@ -106,9 +105,9 @@
         <!-- Slider -->
         <div class="slider-container">
             <p class="slider-label">
-                Guess the date: <span id="sliderMonth">January</span> <span id="sliderYear">2023</span>
+                Guess the date: <span id="sliderMonth">July</span> <span id="sliderYear">2023</span>
             </p>
-            <input type="range" id="dateSlider" min="0" max="24" value="0">
+            <input type="range" id="dateSlider" min="0" max="18" value="0">
             <button id="confirmButton">Confirm</button>
         </div>
 
@@ -145,6 +144,9 @@
         let currentVideo = null;
         let totalPoints = 0;
 
+        const startYear = 2023;
+        const startMonth = 6; // July 2023
+
         function pickRandomVideos() {
             const shuffled = videos.sort(() => 0.5 - Math.random());
             randomVideos = shuffled.slice(0, 5);
@@ -158,18 +160,14 @@
         }
 
         function setupSlider() {
-            const startYear = 2023;
-            const startMonth = 0;
-            const totalMonths = 24;
-
-            slider.max = totalMonths;
+            slider.max = 18; // July 2023 to January 2025 = 18 months
             slider.value = 0;
-            updateSliderLabels(startYear, startMonth, slider.value);
+            updateSliderLabels(slider.value);
 
-            slider.addEventListener("input", () => updateSliderLabels(startYear, startMonth, slider.value));
+            slider.addEventListener("input", () => updateSliderLabels(slider.value));
         }
 
-        function updateSliderLabels(startYear, startMonth, value) {
+        function updateSliderLabels(value) {
             const date = new Date(startYear, startMonth + parseInt(value));
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             sliderMonthLabel.textContent = monthNames[date.getMonth()];
@@ -177,6 +175,7 @@
         }
 
         function calculatePoints(monthsOff) {
+            if (monthsOff === 0) return 1000;
             if (monthsOff === 1) return 900;
             if (monthsOff === 2) return 800;
             if (monthsOff === 3) return 600;
@@ -187,9 +186,9 @@
         }
 
         confirmButton.addEventListener("click", () => {
-            const sliderDate = new Date(2023, 0 + parseInt(slider.value));
+            const sliderDate = new Date(startYear, startMonth + parseInt(slider.value));
             const actualDate = new Date(currentVideo.date);
-            const monthsOff = Math.abs(Math.round((actualDate - sliderDate) / (1000 * 60 * 60 * 24 * 30.44)));
+            const monthsOff = Math.abs((actualDate.getFullYear() - sliderDate.getFullYear()) * 12 + (actualDate.getMonth() - sliderDate.getMonth()));
             const points = calculatePoints(monthsOff);
 
             totalPoints += points;
