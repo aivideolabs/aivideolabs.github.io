@@ -1,74 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="font-Roboto">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChiefXD Video Guessing Game</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/5a90c3ba14f91210.css">
+    <title>Guess the Video Date | ChiefXD</title>
     <style>
-        /* Algemene stijl */
+        /* Stijl voor de gridachtergrond */
+        .bg-grid-slate {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 120px 120px;
+            z-index: -1;
+        }
+
+        /* Algemene achtergrond met gradient */
         body {
             background: linear-gradient(to right, #1e293b, #334155, #0f172a);
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
             font-family: Roboto, sans-serif;
             color: white;
-            margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            overflow: hidden;
         }
 
-        h1 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-            text-align: center;
-            color: #cbd5e1;
-        }
-
+        /* Container stijl */
         .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 90%;
-            max-width: 1200px;
-            height: 80%;
+            max-width: 800px;
+            text-align: center;
         }
 
-        .video-section, .slider-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .video-section iframe {
-            width: 80%;
-            max-width: 600px;
-            height: 315px;
-            border-radius: 10px;
+        iframe {
+            width: 100%;
+            height: 360px;
             border: none;
+            margin-bottom: 1rem;
+            border-radius: 10px;
         }
 
-        .slider-section {
+        .slider-container {
             margin-top: 1rem;
             text-align: center;
-        }
-
-        .slider-section input[type="range"] {
-            width: 80%;
         }
 
         .slider-label {
-            margin: 1rem 0;
             font-size: 1.2rem;
-            color: #cbd5e1;
+            margin-bottom: 0.5rem;
         }
 
-        .result {
-            margin-top: 1rem;
-            font-size: 1.2rem;
+        input[type="range"] {
+            width: 100%;
         }
 
         button {
@@ -78,116 +69,125 @@
             border: none;
             border-radius: 5px;
             color: white;
-            cursor: pointer;
             font-size: 1rem;
+            cursor: pointer;
         }
 
         button:hover {
             background-color: #2563eb;
         }
+
+        .result {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: #f87171;
+        }
     </style>
 </head>
 <body>
-    <h1>ChiefXD Video Guessing Game</h1>
+    <div class="bg-grid-slate"></div>
     <div class="container">
-        <!-- Video Sectie -->
-        <div class="video-section">
-            <iframe id="videoPlayer" src="" allowfullscreen></iframe>
-            <h2 id="videoTitle">Loading a random video...</h2>
-        </div>
+        <h1>Guess the Video Date</h1>
+        <iframe id="videoPlayer" src="" allowfullscreen></iframe>
+        <h2 id="videoTitle">Loading random video...</h2>
 
-        <!-- Slider Sectie -->
-        <div class="slider-section">
-            <p class="slider-label">Guess the date: <span id="sliderMonth">January</span> <span id="sliderYear">2023</span></p>
-            <input type="range" id="dateSlider" min="0" max="24" value="0" />
+        <!-- Slider -->
+        <div class="slider-container">
+            <p class="slider-label">
+                Guess the date: <span id="sliderMonth">January</span> <span id="sliderYear">2023</span>
+            </p>
+            <input type="range" id="dateSlider" min="0" max="24" value="0">
             <button id="confirmButton">Confirm</button>
             <p class="result" id="resultMessage"></p>
         </div>
     </div>
 
     <script>
-        const apiKey = 'AIzaSyDr8m5EpPgSdS-MF-rk00HV8rk1jJFQh9E';
-        const channelId = 'UCZ7jSWwFSdFw8hDbihBXZeQ'; // ChiefXD's Channel ID
-        const videoPlayer = document.getElementById('videoPlayer');
-        const videoTitle = document.getElementById('videoTitle');
-        const slider = document.getElementById('dateSlider');
-        const sliderMonthLabel = document.getElementById('sliderMonth');
-        const sliderYearLabel = document.getElementById('sliderYear');
-        const confirmButton = document.getElementById('confirmButton');
-        const resultMessage = document.getElementById('resultMessage');
-
-        let videos = [];
-        let randomVideo = null;
-        let firstVideoDate = null;
-
-        // Maanden voor weergave
-        const monthNames = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
+        // Gegevens uit het TXT-bestand (alle video's)
+        const videos = [
+            { id: "uLC7XiUdL4c", title: "I Spent One Year Surviving Minecraft Horror Mods… Here’s What Happened", date: "2025-01-03" },
+            { id: "Xl04ohxC4AM", title: "Surviving Minecraft's Scariest Winter Mod", date: "2024-12-24" },
+            { id: "a7clSlWlZo4", title: "I Conquered Minecraft's Scariest Mods [FULL MOVIE]", date: "2024-12-20" },
+            { id: "4hgA4HcUgik", title: "Surviving a Haunted Shipwreck Island in Hardcore Minecraft", date: "2024-12-12" },
+            { id: "24pmZDVdeOE", title: "Minecraft's Scariest Mod is Now Even Scarier", date: "2024-12-05" },
+            { id: "aDhabaOKwUI", title: "I Spent 100 Days Plotting the Ultimate Minecraft Revenge", date: "2024-11-29" },
+            { id: "o21z3mZDSO0", title: "Surviving Minecraft's Most Disturbing Mods for 100 Days in Hardcore 7", date: "2024-11-22" },
+            { id: "xcOUWGbUpVE", title: "Surviving a Terrifying Alien Mod in Minecraft Hardcore", date: "2024-11-13" },
+            // Voeg hier alle video's toe uit het bestand
         ];
 
-        // Video's ophalen
-        async function fetchVideos() {
-            try {
-                const videoResponse = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet&order=date&maxResults=50`);
-                const videoData = await videoResponse.json();
-                videos = videoData.items.filter(video => video.id.videoId);
-                randomVideo = videos[Math.floor(Math.random() * videos.length)];
-                firstVideoDate = new Date(videos[videos.length - 1].snippet.publishedAt);
+        const videoPlayer = document.getElementById("videoPlayer");
+        const videoTitle = document.getElementById("videoTitle");
+        const slider = document.getElementById("dateSlider");
+        const sliderMonthLabel = document.getElementById("sliderMonth");
+        const sliderYearLabel = document.getElementById("sliderYear");
+        const confirmButton = document.getElementById("confirmButton");
+        const resultMessage = document.getElementById("resultMessage");
 
-                loadRandomVideo(randomVideo);
-                setupSlider(firstVideoDate, new Date());
-            } catch (error) {
-                console.error('Error fetching videos:', error);
-                videoTitle.textContent = "Failed to load videos.";
-            }
+        let randomVideos = [];
+        let currentVideo = null;
+
+        // Kies 5 unieke video's
+        function pickRandomVideos() {
+            const shuffled = videos.sort(() => 0.5 - Math.random());
+            randomVideos = shuffled.slice(0, 5);
         }
 
-        // Random video laden
-        function loadRandomVideo(video) {
-            videoPlayer.src = `https://www.youtube.com/embed/${video.id.videoId}`;
-            videoTitle.textContent = video.snippet.title;
+        // Laad een video
+        function loadRandomVideo() {
+            currentVideo = randomVideos.shift();
+            videoPlayer.src = `https://www.youtube.com/embed/${currentVideo.id}`;
+            videoTitle.textContent = currentVideo.title;
         }
 
         // Slider instellen
-        function setupSlider(startDate, endDate) {
-            const startYear = startDate.getFullYear();
-            const startMonth = startDate.getMonth();
-            const totalMonths = (endDate.getFullYear() - startYear) * 12 + endDate.getMonth() - startMonth;
-
+        function setupSlider() {
+            const startYear = 2023;
+            const startMonth = 0; // Januari
+            const totalMonths = 24; // Januari 2023 tot heden
             slider.max = totalMonths;
             slider.value = 0;
 
             updateSliderLabels(startYear, startMonth, slider.value);
-
-            // Live update van labels terwijl de slider beweegt
-            slider.addEventListener('input', () => updateSliderLabels(startYear, startMonth, slider.value));
+            slider.addEventListener("input", () => updateSliderLabels(startYear, startMonth, slider.value));
         }
 
         // Labels updaten
         function updateSliderLabels(startYear, startMonth, value) {
-            const selectedDate = new Date(startYear, startMonth + parseInt(value));
-            sliderMonthLabel.textContent = monthNames[selectedDate.getMonth()];
-            sliderYearLabel.textContent = selectedDate.getFullYear();
+            const date = new Date(startYear, startMonth + parseInt(value));
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            sliderMonthLabel.textContent = monthNames[date.getMonth()];
+            sliderYearLabel.textContent = date.getFullYear();
         }
 
-        // Bevestig de gok
-        confirmButton.addEventListener('click', () => {
-            const selectedDate = new Date(firstVideoDate.getFullYear(), firstVideoDate.getMonth() + parseInt(slider.value));
-            const actualDate = new Date(randomVideo.snippet.publishedAt);
-            const differenceInMonths = Math.round((actualDate - selectedDate) / (1000 * 60 * 60 * 24 * 30.44));
+        // Gok bevestigen
+        confirmButton.addEventListener("click", () => {
+            const sliderDate = new Date(2023, 0 + parseInt(slider.value));
+            const actualDate = new Date(currentVideo.date);
+            const difference = Math.round((actualDate - sliderDate) / (1000 * 60 * 60 * 24 * 30.44));
 
-            if (differenceInMonths === 0) {
+            if (difference === 0) {
                 resultMessage.textContent = "Correct! You guessed the exact date!";
                 resultMessage.style.color = "#4ade80";
             } else {
-                resultMessage.textContent = `You were ${Math.abs(differenceInMonths)} month(s) ${differenceInMonths > 0 ? "early" : "late"}.`;
+                resultMessage.textContent = `You were ${Math.abs(difference)} month(s) ${difference > 0 ? "early" : "late"}.`;
                 resultMessage.style.color = "#f87171";
+            }
+
+            if (randomVideos.length > 0) {
+                setTimeout(() => {
+                    resultMessage.textContent = "";
+                    loadRandomVideo();
+                }, 3000);
+            } else {
+                resultMessage.textContent += " Game over!";
             }
         });
 
-        // Start
-        fetchVideos();
+        // Start de game
+        pickRandomVideos();
+        loadRandomVideo();
+        setupSlider();
     </script>
 </body>
 </html>
