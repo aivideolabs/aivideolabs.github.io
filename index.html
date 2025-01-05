@@ -17,25 +17,26 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Schuif alles omhoog */
             height: 100vh;
         }
 
         .container {
             max-width: 800px;
             text-align: center;
+            margin-top: 1rem; /* Verminder ruimte bovenaan */
         }
 
         iframe {
             width: 100%;
-            height: 360px;
+            height: 280px; /* Maak de video kleiner */
             border: none;
             margin-bottom: 1rem;
             border-radius: 10px;
         }
 
         .slider-container, .result-container {
-            margin-top: 1rem;
+            margin-top: 0.5rem; /* Minder marge boven elk onderdeel */
             text-align: center;
         }
 
@@ -48,44 +49,57 @@
         }
 
         .points-display {
-            font-size: 1.5rem;
-            margin-top: 1rem;
+            font-size: 1.2rem; /* Kleinere tekst */
+            margin-top: 0.5rem; /* Minder marge boven */
         }
 
         .points-box {
             display: inline-block;
-            padding: 1rem;
+            padding: 0.8rem; /* Compactere padding */
             border: 2px solid #4ade80;
             border-radius: 10px;
-            font-size: 2rem;
+            font-size: 1.5rem; /* Kleinere tekst in box */
             background: linear-gradient(to right, #ff7e79, #ffdf88);
             color: black;
             font-weight: bold;
         }
 
         .result-message {
-            margin-top: 1rem;
-            font-size: 1.2rem;
+            margin-top: 0.5rem; /* Minder ruimte boven resultaat */
+            font-size: 1rem;
             color: #f87171;
         }
 
         button {
-            margin-top: 1rem;
-            padding: 0.5rem 1rem;
+            margin-top: 0.5rem; /* Minder marge boven de knoppen */
+            padding: 0.4rem 0.8rem; /* Kleinere knoppen */
             background-color: #3b82f6;
             border: none;
             border-radius: 5px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.9rem;
             cursor: pointer;
         }
 
         button:hover {
             background-color: #2563eb;
         }
+
+        .bg-grid-slate {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 120px 120px;
+            z-index: -1;
+        }
     </style>
 </head>
 <body>
+    <div class="bg-grid-slate"></div>
     <div class="container">
         <h1>Guess the Video Date</h1>
         <iframe id="videoPlayer" src="" allowfullscreen></iframe>
