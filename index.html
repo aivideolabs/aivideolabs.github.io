@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <link rel="stylesheet" href="css/5a90c3ba14f91210.css">
     <title>Guess the Video Date | ChiefXD</title>
     <style>
         /* Algemene achtergrond met gradient */
@@ -17,62 +16,61 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Schuif alles omhoog */
+            justify-content: flex-start;
             height: 100vh;
         }
 
         .container {
             max-width: 800px;
             text-align: center;
-            margin-top: 1rem; /* Verminder ruimte bovenaan */
+            margin-top: 1rem;
         }
 
         iframe {
             width: 100%;
-            height: 280px; /* Maak de video kleiner */
+            height: 280px;
             border: none;
             margin-bottom: 1rem;
             border-radius: 10px;
         }
 
         .slider-container, .result-container {
-            margin-top: 0.5rem; /* Minder marge boven elk onderdeel */
+            margin-top: 0.5rem;
             text-align: center;
         }
 
-        .slider-container {
-            display: none;
-        }
-
-        .result-container {
-            display: none;
-        }
-
         .points-display {
-            font-size: 1.2rem; /* Kleinere tekst */
-            margin-top: 0.5rem; /* Minder marge boven */
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
         }
 
         .points-box {
             display: inline-block;
-            padding: 0.8rem; /* Compactere padding */
+            padding: 0.8rem 1rem;
             border: 2px solid #4ade80;
             border-radius: 10px;
-            font-size: 1.5rem; /* Kleinere tekst in box */
-            background: linear-gradient(to right, #ff7e79, #ffdf88);
-            color: black;
+            font-size: 1.5rem;
             font-weight: bold;
+            color: black;
+            background: linear-gradient(45deg, #3b82f6, #22c55e, #94a3b8);
+            background-size: 200%;
+            animation: gradientMove 3s infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0%; }
+            100% { background-position: 100%; }
         }
 
         .result-message {
-            margin-top: 0.5rem; /* Minder ruimte boven resultaat */
+            margin-top: 0.5rem;
             font-size: 1rem;
             color: #f87171;
         }
 
         button {
-            margin-top: 0.5rem; /* Minder marge boven de knoppen */
-            padding: 0.4rem 0.8rem; /* Kleinere knoppen */
+            margin-top: 0.5rem;
+            padding: 0.4rem 0.8rem;
             background-color: #3b82f6;
             border: none;
             border-radius: 5px;
@@ -117,7 +115,7 @@
         <!-- Result -->
         <div class="result-container">
             <div class="points-display">
-                <span class="points-box" id="pointsBox">0 / 1000</span>
+                <span class="points-box" id="pointsBox">0 / 5000</span>
             </div>
             <p class="result-message" id="resultMessage"></p>
             <button id="nextButton">Next</button>
@@ -178,20 +176,30 @@
             sliderYearLabel.textContent = date.getFullYear();
         }
 
+        function calculatePoints(monthsOff) {
+            if (monthsOff === 1) return 900;
+            if (monthsOff === 2) return 800;
+            if (monthsOff === 3) return 600;
+            if (monthsOff === 4) return 400;
+            if (monthsOff === 5) return 200;
+            if (monthsOff === 6) return 100;
+            return 0;
+        }
+
         confirmButton.addEventListener("click", () => {
             const sliderDate = new Date(2023, 0 + parseInt(slider.value));
             const actualDate = new Date(currentVideo.date);
-            const difference = Math.round((actualDate - sliderDate) / (1000 * 60 * 60 * 24 * 30.44));
-            const points = Math.max(0, 1000 - Math.abs(difference) * 20);
+            const monthsOff = Math.abs(Math.round((actualDate - sliderDate) / (1000 * 60 * 60 * 24 * 30.44)));
+            const points = calculatePoints(monthsOff);
 
             totalPoints += points;
-            pointsBox.textContent = `${totalPoints} / 1000`;
+            pointsBox.textContent = `${totalPoints} / 5000`;
 
-            resultMessage.textContent = difference === 0
+            resultMessage.textContent = monthsOff === 0
                 ? "Correct! You guessed the exact date!"
-                : `You were ${Math.abs(difference)} months off. The actual date is ${actualDate.toLocaleString("en", { month: "long" })} ${actualDate.getFullYear()}.`;
+                : `You were ${monthsOff} months off. The actual date is ${actualDate.toLocaleString("en", { month: "long" })} ${actualDate.getFullYear()}.`;
 
-            resultMessage.style.color = difference === 0 ? "#4ade80" : "#f87171";
+            resultMessage.style.color = monthsOff === 0 ? "#4ade80" : "#f87171";
 
             showResult();
         });
